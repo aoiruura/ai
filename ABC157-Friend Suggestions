@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+#define rep(i,n) for(int i=0;i<(n);++i)
+#define rrep(i,n) for(int i=1;i<(n);++i)
+#define all(a) (a).begin(),(a).end()
+#define rall(a) (a).rbegin(),(a).rend()
+#define dunk(a) cout << (a) << "\n"
+using namespace std;
+typedef long long ll;
+typedef pair<int, int> P;
+const int inf = 1001001001;
+const int mod = 1000000007;
+
+class UnionFind {
+public:
+	//親の番号を格納する。親だった場合は-(その集合のサイズ)
+	vector<int> Parent;
+	//作るときはParentの値を全て-1にする
+	//こうするとすべてバラバラになる
+	UnionFind(int N) {
+		Parent = vector<int>(N, -1);
+	}
+	//Aがどのグループに属しているか調べる
+	int root(int A) {
+		if (Parent[A] < 0) return A;
+		return Parent[A] = root(Parent[A]);
+	}
+	//自分のいるグループの頂点数を調べる
+	int size(int A) {
+		return -Parent[root(A)];//親をとってきたい
+	}
+	//AとBをくっつける
+	bool connect(int A, int B) {
+		//AとBを直接つなぐのではなく、root(A)にroot(B)をくっつける
+		A = root(A);
+		B = root(B);
+		if (A == B) {
+			//すでにくっついているからくっつけない
+			return false;
+		}
+		//大きい方(A)に小さいほう(B)をくっつけたい
+		//大小が逆だったらひっくり返しちゃう
+		if (size(A) < size(B)) swap(A, B);
+		//Aのサイズを更新する
+		Parent[A] += Parent[B];
+		//Bの親をAに変更する
+		Parent[B] = A;
+
+		return true;
+	}
+	//AとBが同じグループにいるか
+	bool same(int A, int B) { return root(A) == root(B); }
+};
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	vector<int> res(n);
+	vector<vector<int>> block(n);
+	UnionFind Uni(n);
+	rep(i, m) {
+		int a, b; cin >> a >> b;
+		a--; b--;
+		Uni.connect(a, b);
+		res[a]++; res[b]++;
+	}
+	rep(i, k) {
+		int c, d; cin >> c >> d;
+		c--; d--;
+		block[c].emplace_back(d);
+		block[d].emplace_back(c);
+	}
+	rep(i, n) {
+		int ans = Uni.size(i) - 1 - res[i];
+		for (auto& c : block[i]) if (Uni.same(i, c)) ans--;
+		cout << ans << (i == n - 1 ? "\n" : " ");
+	}
+
+	return 0;
+}
+//最短距離を考えない場合又は２以上離れている場合に使える
+//基本的に木はUnion-findで作れるが最短距離などを直接的に考える場合は使わない方がよい
+//順位表を見ながらだけど木の問題でAC数が多い時には貪欲で溶ける場合がほとんど
