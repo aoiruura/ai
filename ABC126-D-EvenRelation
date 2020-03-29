@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+#define rep(i,n) for(int i=0;i<(n);++i)
+#define rrep(i,n) for(int i=1;i<(n);++i)
+#define all(a) (a).begin(),(a).end()
+#define rall(a) (a).rbegin(),(a).rend()
+#define dunk(a) cout << (a) << "\n"
+using namespace std;
+typedef long long ll;
+typedef pair<int, int> P;
+const int inf = 1001001001;
+const int mod = 1000000007;
+
+int n;
+vector<vector<pair<int, ll>>> g(100001);
+vector<bool> vi(100001, false);
+vector<ll> ans(100001, 0);
+
+void dfs(int a, ll w) {
+	vi[a] = true;
+	for (auto& c : g[a]) {
+		if (vi[c.first]) continue;
+		vi[c.first] = true;
+		ans[c.first] = w + c.second;
+		dfs(c.first, ans[c.first]);
+	}
+	return;
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cin >> n;
+	rep(i, n - 1) {
+		int u, v, w; cin >> u >> v >> w;
+		u--; v--;
+		g[u].emplace_back(pair<int, ll>(v, w));
+		g[v].emplace_back(pair<int, ll>(u, w));
+	}
+	dfs(0, 0);
+	rep(i, n) dunk(ans[i] % 2);
+	return 0;
+}
+//dfsの一例n <= 10^5で60msほど、さほど早くない
+//
