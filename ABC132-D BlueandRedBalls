@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+#define rep(i,n) for(int i=0;i<(n);++i)
+#define rrep(i,n) for(int i=1;i<(n);++i)
+#define all(a) (a).begin(),(a).end()
+#define rall(a) (a).rbegin(),(a).rend()
+#define dunk(a) cout << (a) << "\n"
+using namespace std;
+typedef long long ll;
+typedef pair<int, int> P;
+const int inf = 1001001001;
+const int mod = 1000000007;
+
+struct mint {
+	ll x;
+	mint(ll x = 0) :x(x% mod) {}
+	mint& operator+=(const mint a) {
+		(x += a.x) %= mod;
+		return *this;
+	}
+	mint& operator-=(const mint a) {
+		(x += mod - a.x) %= mod;
+		return *this;
+	}
+	mint& operator*=(const mint a) {
+		(x *= a.x) %= mod;
+		return *this;
+	}
+	mint operator+(const mint a) const {
+		mint res(*this);
+		return res += a;
+	}
+	mint operator-(const mint a) const {
+		mint res(*this);
+		return res -= a;
+	}
+	mint operator*(const mint a) const {
+		mint res(*this);
+		return res *= a;
+	}
+};
+
+mint c[4005][4005];
+void init() {
+	c[0][0] = 1;
+	for (int i = 0; i <= 4000; i++) {
+		for (int j = 0; j <= i; j++) {
+			c[i + 1][j] += c[i][j];
+			c[i + 1][j + 1] += c[i][j];
+		}
+	}
+}
+mint comb(int n, int k) {
+	return c[n][k];
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	init();
+	ll n, k;
+	cin >> n >> k;
+	for (ll i = 1; i <= k; ++i) {
+		mint ans = comb(n - k + 1, i) * comb(k - 1, i - 1);
+		printf("%d\n", ans);
+	}
+	return 0;
+}
+//小さい値の時なぜかこっちの方がうまくいく
