@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+#pragma GCC target("avx2")
+#pragma GCC optimize("03")
+#pragma GCC optimize("unroll-loops")
+#define rep(i,n) for(int i=0;i<(n);++i)
+#define rrep(i,n) for(int i=1;i<(n);++i)
+#define all(a) (a).begin(),(a).end()
+#define rall(a) (a).rbegin(),(a).rend()
+#define dunk(a) cout << (a) << "\n"
+using namespace std;
+typedef long long ll;
+typedef pair<int, int> P;
+const int inf = 1001001001;
+const int mod = 1000000007;
+
+vector<vector<P>> G(100001);
+vector<int> ans;
+
+void dfs(int a, int d = -1, int p = -1) {
+	int tmp = 1;
+	for (auto& c : G[a]) {
+		int land = c.first, bridge = c.second;
+		if (land == p) continue;
+		if (tmp == d) tmp++;
+		ans[bridge] = tmp; tmp++;
+		dfs(land, ans[bridge], a);
+	}
+	return;
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n; cin >> n;
+	rep(i, n - 1) {
+		int a, b; cin >> a >> b;
+		a--; b--;
+		G[a].emplace_back(b, i);
+		G[b].emplace_back(a, i);
+	}
+	ans.resize(n - 1, -1);
+	dfs(0);
+	int j_ans = 0;
+	rep(i, n) j_ans = max(j_ans, (int)G[i].size());
+	dunk(j_ans);
+	rep(i, n - 1) dunk(ans[i]);
+	return 0;
+}
+//見どころは再帰の作り方
+//再起に戻らない条件とその根の周りの割り振られた番号でさえ管理している
