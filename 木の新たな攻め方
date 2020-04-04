@@ -1,0 +1,32 @@
+#include <bits/stdc++.h>
+#define rep(i,n) for(int i=0;i<(n);++i)
+using namespace std;
+typedef long long ll;
+typedef pair<int, int> P;
+
+vector<int> to[100005];
+bool used[100005];
+
+int main() {
+	int n;
+	cin >> n;
+	rep(i, n - 1) {
+		int a, b; cin >> a >> b;
+		to[a].emplace_back(b);
+		to[b].emplace_back(a);
+	}
+	priority_queue<int, vector<int>, greater<int>> que;
+	vector<int> ans;
+	que.push(1);
+	while (que.size()) {
+		int v = que.top(); que.pop();
+		if (used[v]) continue;
+		used[v] = true;
+		ans.emplace_back(v);
+		rep(i, to[v].size()) que.push(to[v][i]);
+	}
+	rep(i, n) {
+		cout << ans[i] << (i == n - 1 ? "\n" : " ");
+	}
+	return 0;
+}
